@@ -1,0 +1,38 @@
+{
+  "name": "earth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify main.js --copy-files -o dist/bundle.js",
+    "watch": "watchify main.js --copy-files -o dist/bundle.js -v"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nasaworldwind/worldwind": "^0.10.0",
+    "browserify": "^16.5.2",
+    "ecef-projector": "^1.0.1",
+    "p5": "^1.1.9",
+    "tle.js": "^4.2.5",
+    "watchify": "^3.11.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "babelify": "^10.0.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
+    ]
+  }
+}
