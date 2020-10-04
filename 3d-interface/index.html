@@ -6,22 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./assets/css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div id="bar">
-      <ul id="nav-links-container">
-        <li>
-          <a class="nav-links" onclick="switchToEarthView()" href="#">Earth View</a>
-        </li>
-        <li>
-          <a class="nav-links" onclick="switchToSpaceView()" href="#">Space View</a>
-        </li>
-        <li>
-          <a class="nav-links" onclick="switchToSatteliteView()" href="#">Sattelite View</a>
-        </li>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" data-spy="affix" style="font-size: 30px;" id="bar">
+      <a class="navbar-brand" href="index.html" style="color: deepskyblue; font-size: 50px; font-family: 'Trebuchet MS', sans-serif;">Look Out the Window</a>
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+              <a class="nav-link" onclick="switchToEarthView()" href="#">Earth View</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" onclick="switchToSpaceView()" href="#">Space View</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" onclick="switchToSatteliteView()" href="#">Satellite View</a>
+          </li>
       </ul>
-    </div>
+      <a class="navbar-brand navbar-right" href="#">
+        <img id="logo" src="assets/models/logo.png" alt="">
+      </a>
+    </nav>
+
     <div id="renderer"></div>
+
     <script src="./assets/js/orbit-controls.js"></script>
     <script src="./assets/js/earth-view.js"></script>
     <script src="./assets/js/space-view.js"></script>
