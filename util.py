@@ -5,11 +5,11 @@ tles['tles'] = []
 with open('sats.txt') as f:
     lines = f.readlines()
     for i in range(len(lines) // 3):
-        tles['tles'].append({
+        tles['tles'].append([
             lines[i * 3],
             lines[i * 3 + 1],
             lines[i * 3 + 2]
-        })
+        ])
 
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):

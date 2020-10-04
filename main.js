@@ -49,17 +49,23 @@ const sketch = p => {
   };
 
   p.draw = () => {
+    manager.update();
     p.background(0);
     p.noStroke();
     earthView();
 
     const names = manager.getAllNames();
+    let first = true;
     for (let name of names) {
       let x, y, z;
       [x, y, z] = manager.getPos(name);
       x *= orbRatio;
       y *= orbRatio;
       z *= orbRatio;
+        if (first) {
+          console.log(name, x, y, z);
+          first = false;
+        }
       p.push();
       {
         p.scale(satScale);

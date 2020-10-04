@@ -17,18 +17,24 @@ class Manager {
 
   getPos(name) {
     const sat = this.map.get(name);
-    const dt = Date.now() - this.startTime;
-    const millisPerTick = 100;
-    const i = Math.floor(dt / millisPerTick);
-    return sat.orbit[i % sat.orbit.length];
+    // const dt = Date.now() - this.startTime;
+    // const millisPerTick = 100;
+    // const i = Math.floor(dt / millisPerTick);
+    // return sat.orbit[i % sat.orbit.length];
+    return [sat.x, sat.y, sat.z];
   }
 
   load(tleStr) {
+    let sat = null;
     try {
-      const sat = this.getSat(tleStr, this.startTime, this.lat, this.lng, this.height);
+      sat = this.getSat(tleStr, this.startTime, this.lat, this.lng, this.height);
       this.map.set(sat.name, sat);
     } catch (e) {
-
+      sat = null;
+      console.log("bad");
+    }
+    if (sat !== null) {
+      this.map.set(sat.name, sat);
     }
   }
 
@@ -39,9 +45,9 @@ class Manager {
   }
 
   update() {
-    this.map.forEach((_, sat) => {
+    for (let sat of this.map.values()) {
       this.updateSat(sat);
-    });
+    }
   }
 
   updateSat(sat) {
