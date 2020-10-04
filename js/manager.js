@@ -46,6 +46,13 @@ class Manager {
   }
 
   updateSat(sat) {
+    function project(lat, lng, alt) {
+      return [
+        (alt + EarthRadius) * -Math.sin(lng * Math.PI / 180) * Math.cos(lat * Math.PI / 180),
+        (alt + EarthRadius) * -Math.sin(lat * Math.PI / 180),
+        (alt + EarthRadius) * -Math.cos(lng * Math.PI / 180) * Math.cos(lat * Math.PI / 180)
+      ];
+    }
     const info = getSatelliteInfo(sat.tleStr, Date.now(), this.lat, this.lng, this.height);
     sat.azimuth = info.azimuth;
     sat.elevation = info.elevation;
@@ -54,7 +61,8 @@ class Manager {
     sat.longitude = info.lng;
     sat.velocity = info.velocity;
     const EarthRadius = 6378137;
-    const xyz = projector.project(sat.latitude, sat.longitude, sat.height);
+    // const xyz = projector.project(sat.latitude, sat.longitude, sat.height);
+    const xyz = project(sat.latitude, sat.longitude, sat.height);
     sat.x = xyz[0];
     sat.y = xyz[1];
     sat.z = xyz[2];

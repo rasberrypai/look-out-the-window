@@ -9,34 +9,42 @@ var view = 0;
 //1 -> space
 //2 -> sattelite
 
-var latitude = 30;
-var longitude = 0;
+var latitude = 40;
+var longitude = -120;
 var altitude = 6378137*2;
 
 let chosenSat = null;
+let satIdx = 35;
 
 const EarthViewAlt = 6378137*2;
 const SpaceViewAlt = 6378137*0.20;
 const EarthRadius = 6378137;
 
+function project(lat, lng, alt) {
+  return [
+    (alt + EarthRadius) * -Math.sin(lng * Math.PI / 180) * Math.cos(lat * Math.PI / 180),
+    (alt + EarthRadius) * -Math.sin(lat * Math.PI / 180),
+    (alt + EarthRadius) * -Math.cos(lng * Math.PI / 180) * Math.cos(lat * Math.PI / 180)
+  ];
+}
+
 const sketch = p => {
-  const ratio = 400 / 6378137;
-  const satScale = 0.1;
+  const ratio = 2000 / 6378137;
+  const satScale = 0.3;
   const orbRatio = ratio * (1.0 / satScale + 1);
 
   let cam;
+  let manager;
 
   let lastX = 0;
   let lastY = 0;
 
   let earthImg;
   let satelliteModel;
-  const earthRadius = 400;
-
-  let manager;
+  const earthRadius = 2000;
 
   const setPosition = () => {
-    let cameraLocation = projector.project(latitude,longitude,altitude);
+    let cameraLocation = project(latitude,longitude,altitude);
     let x = cameraLocation[0] * ratio;
     let y = cameraLocation[1] * ratio;
     let z = cameraLocation[2] * ratio;
@@ -56,7 +64,7 @@ const sketch = p => {
     if (!hasSwitched) {
       // altitude = SpaceViewAlt;
       altitude = 300;
-      let viewPoint = projector.project(latitude,longitude,altitude+10000000);
+      let viewPoint = project(latitude,longitude,altitude+10000000);
       let x = viewPoint[0] * ratio;
       let y = viewPoint[1] * ratio;
       let z = viewPoint[2] * ratio;
@@ -67,13 +75,11 @@ const sketch = p => {
   };
 
   const satteliteView = () => {
-    if(!hasSwitched){
-      if(chosenSat === null)
-        chosenSat = manager.map.entries().next().value[1];
+    if (!hasSwitched) {
+      chosenSat = Array.from(manager.map.values())[satIdx];
       latitude = chosenSat.latitude;
       longitude = chosenSat.longitude;
-      altitude = 5000 * chosenSat.height - 10;
-      console.log(latitude, longitude, altitude * 10000);
+      altitude = 1000 * chosenSat.height - 10;
       setPosition();
       cam.lookAt(0, 0, 0);
       hasSwitched = true;
@@ -86,7 +92,7 @@ const sketch = p => {
   };
 
   p.setup = () => {
-    p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
+    p.createCanvas(p.windowWidth, p.windowHeight-parseInt(getComputedStyle(document.getElementById("bar")).height,10), p.WEBGL);
     cam = p.createCamera();
     manager = new Manager();
 
@@ -103,7 +109,11 @@ const sketch = p => {
     p.translate(0,0,0);
     p.scale(1.0);
     p.texture(earthImg);
-    p.sphere(earthRadius);
+    if (view == 1) {
+      p.sphere(earthRadius * 0.95);
+    } else {
+      p.sphere(earthRadius);
+    }
 
     const names = manager.getAllNames();
     for (let name of names) {
@@ -112,15 +122,12 @@ const sketch = p => {
       x *= orbRatio;
       y *= orbRatio;
       z *= orbRatio;
-      // x *= ratio;
-      // y *= ratio;
-      // z *= ratio;
       p.push();
       {
         p.scale(satScale);
         p.translate(x, y, z);
         p.stroke(100);
-        p.strokeWeight(1);
+        p.strokeWeight(0.25);
         p.fill(200);
         p.model(satelliteModel);
       }
@@ -145,15 +152,18 @@ const sketch = p => {
   p.keyPressed = () => {
     if (view == 0) {
       if (p.keyCode === p.LEFT_ARROW) {
-        latitude += 5;
-      } else if (p.keyCode === p.RIGHT_ARROW) {
-        latitude -= 5;
-      } else if (p.keyCode === p.DOWN_ARROW) {
-        longitude += 5;
-      } else if (p.keyCode === p.UP_ARROW) {
         longitude -= 5;
+        hasSwitched = false;
+      } else if (p.keyCode === p.RIGHT_ARROW) {
+        longitude += 5;
+        hasSwitched = false;
+      } else if (p.keyCode === p.DOWN_ARROW) {
+        latitude -= 5;
+        hasSwitched = false;
+      } else if (p.keyCode === p.UP_ARROW) {
+        latitude += 5;
+        hasSwitched = false;
       }
-      hasSwitched = false;
     } else {
       if (p.keyCode === p.LEFT_ARROW) {
         cam.pan(0.2);
@@ -177,7 +187,12 @@ const sketch = p => {
     } else if (p.key === 'c') {
       view = 2;
       hasSwitched = false;
+    } else if (p.key === 'z') {
+      altitude -= 500000;
+    } else if (p.key === 'x') {
+      altitude += 500000;
     }
+    setPosition();
   };
 
   p.mouseDragged = () => {
@@ -185,8 +200,8 @@ const sketch = p => {
     const dy = p.mouseY - lastY;
     if (view == 0) {
       if (dx !== NaN && dy !== NaN) {
-        latitude += dx / 100;
-        longitude -= dy / 100;
+        longitude -= dx / 100;
+        latitude += dy / 100;
         hasSwitched = false;
       }
     } else {
@@ -195,11 +210,11 @@ const sketch = p => {
         cam.tilt(-dy / 10000);
       }
     }
-    if (longitude > 90) {
-      longitude = 90;
+    if (latitude > 90) {
+      latitude = 90;
     }
-    if (longitude < -90) {
-      longitude = -90;
+    if (latitude < -90) {
+      latitude = -90;
     }
   };
 
@@ -210,6 +225,22 @@ const sketch = p => {
 
   p.windowResized = () => {
     p.resizeCanvas(p.windowWidth, p.windowHeight, true);
+  };
+  window.switchToEarthView = () => {
+    view = 0;
+    hasSwitched = false;
+  };
+
+  window.switchToSpaceView = () => {
+    view = 1;
+    hasSwitched = false;
+  };
+
+  window.switchToSatelliteView = () => {
+    view = 2;
+    hasSwitched = false;
+    let len = manager.map.size;
+    satIdx = Math.floor(len * Math.random());
   };
 };
 
