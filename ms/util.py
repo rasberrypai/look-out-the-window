@@ -3,11 +3,14 @@ import json
 tles = {}
 tles['tles'] = []
 with open('sats.txt') as f:
-    lines_iter = iter(f.readlines())
-    for name_l1_l2 in zip(lines_iter, lines_iter, lines_iter):
+    lines = f.readlines()
+    for i in range(len(lines) // 3):
         tles['tles'].append({
-            ''.join(name_l1_l2)
+            lines[i * 3],
+            lines[i * 3 + 1],
+            lines[i * 3 + 2]
         })
+
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
