@@ -443,8 +443,10 @@ var sketch = function sketch(p) {
       hasSwitched = false;
     } else if (p.key === 'z') {
       altitude -= 500000;
+      setPosition();
     } else if (p.key === 'x') {
       altitude += 500000;
+      setPosition();
     }
   };
 
@@ -455,7 +457,15 @@ var sketch = function sketch(p) {
     if (view == 0) {
       if (dx !== NaN && dy !== NaN) {
         longitude -= dx / 100;
-        latitude += dy / 100; // hasSwitched = false;
+        latitude += dy / 100;
+
+        if (latitude > 90) {
+          latitude = 90;
+        }
+
+        if (latitude < -90) {
+          latitude = -90;
+        }
 
         setPosition();
       }
@@ -464,14 +474,6 @@ var sketch = function sketch(p) {
         cam.pan(-dx / 10000);
         cam.tilt(-dy / 10000);
       }
-    }
-
-    if (latitude > 90) {
-      latitude = 90;
-    }
-
-    if (latitude < -90) {
-      latitude = -90;
     }
   };
 
