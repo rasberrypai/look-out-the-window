@@ -15,6 +15,7 @@ canvas {
   background: rgb(67, 86, 107);
   width: 100%;
 }
+
 #renderer{
   width: 100%;
   height: auto;

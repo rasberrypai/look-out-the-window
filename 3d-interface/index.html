@@ -16,6 +16,24 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
   </head>
   <body>
+    <!-- Initialize HTML -->
+    <script>
+      window.onload = function() {
+          // Create satellites
+          let satellites = ["a", "b", "c", "d", "e"]; // find satellites, each item TOOOOOOODOOOOOOO MS pls help fet sattelites
+          satellites.forEach(addSatellite);
+      }
+
+      // Adds a sattelite to the dropdown list
+      function addSatellite(item, index) {
+        option = document.createElement("A");
+        option.className = "dropdown-item";
+        option.setAttribute("onclick", "switchToSatteliteView()");
+        option.innerHTML = item;
+        document.getElementById("satellite-selector").appendChild(option);
+      }
+  </script>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" data-spy="affix" style="font-size: 30px;" id="bar">
       <a class="navbar-brand" href="index.html" style="color: deepskyblue; font-size: 50px; font-family: 'Trebuchet MS', sans-serif;">Look Out the Window</a>
@@ -26,8 +44,11 @@
           <li class="nav-item">
               <a class="nav-link" onclick="switchToSpaceView()" href="#">Space View</a>
           </li>
-          <li class="nav-item">
-              <a class="nav-link" onclick="switchToSatteliteView()" href="#">Satellite View</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Satellite View
+            </a>
+            <div id="satellite-selector" class="dropdown-menu" aria-labelledby="navbarDropdown"></div>
           </li>
       </ul>
       <a class="navbar-brand navbar-right" href="#">
