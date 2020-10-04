@@ -17,10 +17,6 @@ class Manager {
 
   getPos(name) {
     const sat = this.map.get(name);
-    // const dt = Date.now() - this.startTime;
-    // const millisPerTick = 100;
-    // const i = Math.floor(dt / millisPerTick);
-    // return sat.orbit[i % sat.orbit.length];
     return [sat.x, sat.y, sat.z];
   }
 
@@ -57,7 +53,7 @@ class Manager {
     sat.latitude = info.lat;
     sat.longitude = info.lng;
     sat.velocity = info.velocity;
-    const xyz = projector.project(sat.latitude, sat.longitude, sat.height*1000);
+    const xyz = projector.project(sat.latitude, sat.longitude, sat.height*10000);
     sat.x = xyz[0];
     sat.y = xyz[1];
     sat.z = xyz[2];
