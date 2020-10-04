@@ -266,11 +266,19 @@ var sketch = function sketch(p) {
     cam.setPosition(x, y, z);
   };
 
+  var updateCam = function updateCam() {
+    setPosition();
+
+    if (view == 0) {
+      cam.lookAt(0, 0, 0);
+    }
+  };
+
   var earthView = function earthView() {
     if (!hasSwitched) {
-      altitude = EarthViewAlt;
-      setPosition();
-      cam.lookAt(0, 0, 0);
+      altitude = EarthViewAlt; // setPosition();
+      // cam.lookAt(0, 0, 0);
+
       hasSwitched = true;
     }
   };
@@ -328,6 +336,25 @@ var sketch = function sketch(p) {
 
   p.draw = function () {
     manager.update();
+
+    switch (view) {
+      case 0:
+        earthView();
+        break;
+
+      case 1:
+        spaceView();
+        break;
+
+      case 2:
+        satteliteView();
+        break;
+
+      default:
+        break;
+    }
+
+    updateCam();
     p.background(0);
     p.noStroke();
     p.translate(0, 0, 0);
@@ -378,39 +405,18 @@ var sketch = function sketch(p) {
     } finally {
       _iterator2.f();
     }
-
-    switch (view) {
-      case 0:
-        earthView();
-        break;
-
-      case 1:
-        spaceView();
-        break;
-
-      case 2:
-        satteliteView();
-        break;
-
-      default:
-        break;
-    }
   };
 
   p.keyPressed = function () {
     if (view == 0) {
       if (p.keyCode === p.LEFT_ARROW) {
         longitude -= 5;
-        hasSwitched = false;
       } else if (p.keyCode === p.RIGHT_ARROW) {
         longitude += 5;
-        hasSwitched = false;
       } else if (p.keyCode === p.DOWN_ARROW) {
         latitude -= 5;
-        hasSwitched = false;
       } else if (p.keyCode === p.UP_ARROW) {
         latitude += 5;
-        hasSwitched = false;
       }
     } else {
       if (p.keyCode === p.LEFT_ARROW) {
@@ -440,8 +446,6 @@ var sketch = function sketch(p) {
     } else if (p.key === 'x') {
       altitude += 500000;
     }
-
-    setPosition();
   };
 
   p.mouseDragged = function () {
@@ -451,8 +455,9 @@ var sketch = function sketch(p) {
     if (view == 0) {
       if (dx !== NaN && dy !== NaN) {
         longitude -= dx / 100;
-        latitude += dy / 100;
-        hasSwitched = false;
+        latitude += dy / 100; // hasSwitched = false;
+
+        setPosition();
       }
     } else {
       if (dx !== NaN && dy !== NaN) {

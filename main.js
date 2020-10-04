@@ -51,11 +51,18 @@ const sketch = p => {
     cam.setPosition(x, y, z);
   };
 
+  const updateCam = () => {
+    setPosition();
+    if (view == 0) {
+      cam.lookAt(0, 0, 0);
+    }
+  }
+
   const earthView = () => {
     if (!hasSwitched) {
       altitude = EarthViewAlt;
-      setPosition();
-      cam.lookAt(0, 0, 0);
+      // setPosition();
+      // cam.lookAt(0, 0, 0);
       hasSwitched = true;
     }
   };
@@ -103,6 +110,22 @@ const sketch = p => {
 
   p.draw = () => {
     manager.update();
+
+    switch(view){
+      case 0:
+        earthView();
+        break;
+      case 1:
+        spaceView();
+        break;
+      case 2:
+        satteliteView();
+        break;
+      default:
+        break;
+    }
+    updateCam();
+
     p.background(0);
     p.noStroke();
 
@@ -133,36 +156,18 @@ const sketch = p => {
       }
       p.pop();
     }
-
-    switch(view){
-      case 0:
-        earthView();
-        break;
-      case 1:
-        spaceView();
-        break;
-      case 2:
-        satteliteView();
-        break;
-      default:
-        break;
-    }
   };
 
   p.keyPressed = () => {
     if (view == 0) {
       if (p.keyCode === p.LEFT_ARROW) {
         longitude -= 5;
-        hasSwitched = false;
       } else if (p.keyCode === p.RIGHT_ARROW) {
         longitude += 5;
-        hasSwitched = false;
       } else if (p.keyCode === p.DOWN_ARROW) {
         latitude -= 5;
-        hasSwitched = false;
       } else if (p.keyCode === p.UP_ARROW) {
         latitude += 5;
-        hasSwitched = false;
       }
     } else {
       if (p.keyCode === p.LEFT_ARROW) {
@@ -192,7 +197,6 @@ const sketch = p => {
     } else if (p.key === 'x') {
       altitude += 500000;
     }
-    setPosition();
   };
 
   p.mouseDragged = () => {
@@ -202,7 +206,8 @@ const sketch = p => {
       if (dx !== NaN && dy !== NaN) {
         longitude -= dx / 100;
         latitude += dy / 100;
-        hasSwitched = false;
+        // hasSwitched = false;
+        setPosition();
       }
     } else {
       if (dx !== NaN && dy !== NaN) {
