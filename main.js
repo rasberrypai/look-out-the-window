@@ -153,16 +153,16 @@ const sketch = p => {
     if (view == 0) {
       if (p.keyCode === p.LEFT_ARROW) {
         longitude -= 5;
-        hasSwitched = false;
+        setPosition();
       } else if (p.keyCode === p.RIGHT_ARROW) {
         longitude += 5;
-        hasSwitched = false;
+        setPosition();
       } else if (p.keyCode === p.DOWN_ARROW) {
         latitude -= 5;
-        hasSwitched = false;
+        setPosition();
       } else if (p.keyCode === p.UP_ARROW) {
         latitude += 5;
-        hasSwitched = false;
+        setPosition();
       }
     } else {
       if (p.keyCode === p.LEFT_ARROW) {
@@ -189,10 +189,11 @@ const sketch = p => {
       hasSwitched = false;
     } else if (p.key === 'z') {
       altitude -= 500000;
+      setPosition();
     } else if (p.key === 'x') {
       altitude += 500000;
+      setPosition();
     }
-    setPosition();
   };
 
   p.mouseDragged = () => {
@@ -202,19 +203,19 @@ const sketch = p => {
       if (dx !== NaN && dy !== NaN) {
         longitude -= dx / 100;
         latitude += dy / 100;
-        hasSwitched = false;
+        if (latitude > 90) {
+          latitude = 90;
+        }
+        if (latitude < -90) {
+          latitude = -90;
+        }
+        setPosition();
       }
     } else {
       if (dx !== NaN && dy !== NaN) {
         cam.pan(-dx / 10000);
         cam.tilt(-dy / 10000);
       }
-    }
-    if (latitude > 90) {
-      latitude = 90;
-    }
-    if (latitude < -90) {
-      latitude = -90;
     }
   };
 
