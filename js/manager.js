@@ -53,7 +53,8 @@ class Manager {
     sat.latitude = info.lat;
     sat.longitude = info.lng;
     sat.velocity = info.velocity;
-    const xyz = projector.project(sat.latitude, sat.longitude, sat.height*10000);
+    const EarthRadius = 6378137;
+    const xyz = projector.project(sat.latitude, sat.longitude, sat.height);
     sat.x = xyz[0];
     sat.y = xyz[1];
     sat.z = xyz[2];

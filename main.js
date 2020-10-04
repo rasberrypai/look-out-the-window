@@ -17,6 +17,7 @@ let chosenSat = null;
 
 const EarthViewAlt = 6378137*2;
 const SpaceViewAlt = 6378137*0.20;
+const EarthRadius = 6378137;
 
 const sketch = p => {
   const ratio = 400 / 6378137;
@@ -24,6 +25,9 @@ const sketch = p => {
   const orbRatio = ratio * (1.0 / satScale + 1);
 
   let cam;
+
+  let lastX = 0;
+  let lastY = 0;
 
   let earthImg;
   let satelliteModel;
@@ -50,7 +54,8 @@ const sketch = p => {
 
   const spaceView = () => {
     if (!hasSwitched) {
-      altitude = SpaceViewAlt;
+      // altitude = SpaceViewAlt;
+      altitude = 300;
       let viewPoint = projector.project(latitude,longitude,altitude+10000000);
       let x = viewPoint[0] * ratio;
       let y = viewPoint[1] * ratio;
@@ -65,11 +70,10 @@ const sketch = p => {
     if(!hasSwitched){
       if(chosenSat === null)
         chosenSat = manager.map.entries().next().value[1];
-      console.log(chosenSat);
       latitude = chosenSat.latitude;
       longitude = chosenSat.longitude;
-      altitude = chosenSat.height - 10;
-      console.log(latitude, longitude, altitude);
+      altitude = 5000 * chosenSat.height - 10;
+      console.log(latitude, longitude, altitude * 10000);
       setPosition();
       cam.lookAt(0, 0, 0);
       hasSwitched = true;
@@ -108,6 +112,9 @@ const sketch = p => {
       x *= orbRatio;
       y *= orbRatio;
       z *= orbRatio;
+      // x *= ratio;
+      // y *= ratio;
+      // z *= ratio;
       p.push();
       {
         p.scale(satScale);
@@ -161,7 +168,6 @@ const sketch = p => {
   };
 
   p.keyTyped = () => {
-    console.log(p.key);
     if (p.key === 'a') {
       view = 0;
       hasSwitched = false;
@@ -172,6 +178,34 @@ const sketch = p => {
       view = 2;
       hasSwitched = false;
     }
+  };
+
+  p.mouseDragged = () => {
+    const dx = p.mouseX - lastX;
+    const dy = p.mouseY - lastY;
+    if (view == 0) {
+      if (dx !== NaN && dy !== NaN) {
+        latitude += dx / 100;
+        longitude -= dy / 100;
+        hasSwitched = false;
+      }
+    } else {
+      if (dx !== NaN && dy !== NaN) {
+        cam.pan(-dx / 10000);
+        cam.tilt(-dy / 10000);
+      }
+    }
+    if (longitude > 90) {
+      longitude = 90;
+    }
+    if (longitude < -90) {
+      longitude = -90;
+    }
+  };
+
+  p.mouseMoved = () => {
+    lastX = p.mouseX;
+    lastY = p.mouseY;
   }
 
   p.windowResized = () => {
