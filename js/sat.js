@@ -2,10 +2,9 @@ import { getSatelliteName } from "tle.js";
 import projector from "ecef-projector";
 
 class Sat {
-  constructor(tleStr, info, orbit) {
+  constructor(tleStr, info) {
     const name = getSatelliteName(tleStr);
     const xyz = projector.project(info.lat, info.lng, info.height);
-    this.orbit = orbit;
     this.azimuth = info.azimuth;
     this.x = xyz[0];
     this.y = xyz[1];

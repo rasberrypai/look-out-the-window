@@ -1,6 +1,22 @@
 import { tles } from "./assets/data/tles.json";
 import p5 from "p5";
+import projector from "ecef-projector";
 import Manager from "./js/manager";
+
+var hasSwitched = false;
+var view = 1;
+//0 -> earth
+//1 -> space
+//2 -> sattelite
+
+var latitude = 0;
+var longitude = 0;
+var altitude = 6378137*2;
+
+var chosenSat;
+
+const EarthViewAlt = 6378137*2;
+const SpaceViewAlt = 6378137;
 
 const sketch = p => {
   const ratio = 400 / 6378137;
@@ -8,8 +24,6 @@ const sketch = p => {
   const orbRatio = ratio * (1.0 / satScale + 1);
 
   let cam;
-  let orbitAngle = 5;
-  let target;
 
   let earthImg;
   let satelliteModel;
@@ -18,17 +32,36 @@ const sketch = p => {
   let manager;
 
   const earthView = () => {
-    p.translate(0,0,0);
-    p.scale(1.0);
-    if(!(p.mouseIsPressed && p.mouseButton === p.RIGHT))
-      p.orbitControl(1, 1, 0.05);
-    p.texture(earthImg);
-    p.sphere(earthRadius);
-    let distanceFromSurface = p.createVector(0, 0, 0).dist(p.createVector(cam.eyeX, cam.eyeY, cam.eyeZ));
-    if (distanceFromSurface < 450) {
-      cam.move(0, 0, 450 - distanceFromSurface);
-    } else if (distanceFromSurface > 8000) {
-      cam.move(0, 0, 8000 - distanceFromSurface);
+    if(!hasSwitched){
+      altitude = EarthViewAlt;
+      cam.lookAt(0,0,0);
+      hasSwitched = true;
+    }
+  };
+
+  const spaceView = () => {
+    if(switched){
+      altitude = SpaceViewAlt;
+      let viewPoint = projector.project(latitude,longitude,SpaceViewAlt+1000000);
+      x = viewPoint[0] * ratio;
+      y = viewPoint[1] * ratio;
+      z = viewPoint[2] * ratio;
+      cam.lookAt(x,y,z);
+      hasSwitched = true;
+    }
+  };
+
+  const satteliteView = () => {
+    if(switched){
+      if(chosenSat == null)
+        chosenSat = manager.map.values[0];
+      let x,y,z;
+      [x,y,z] = project.project(chosenSat.latitude,chosenSat.longitude,chosenSat.altitude-10);
+      latitude = x * orbRatio;
+      longitude = y * orbRatio;
+      altitude = z * orbRatio;
+      cam.lookAt(0,0,0);
+      hasSwitched = true;
     }
   };
 
@@ -40,7 +73,6 @@ const sketch = p => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
     cam = p.createCamera();
-    target = p.createVector(0, 0, 0);
     manager = new Manager();
 
     for (let tle of tles) {
@@ -52,29 +84,50 @@ const sketch = p => {
     manager.update();
     p.background(0);
     p.noStroke();
-    earthView();
+
+    p.translate(0,0,0);
+    p.scale(1.0);
+    p.texture(earthImg);
+    p.sphere(earthRadius);
 
     const names = manager.getAllNames();
-    let first = true;
     for (let name of names) {
       let x, y, z;
       [x, y, z] = manager.getPos(name);
       x *= orbRatio;
       y *= orbRatio;
       z *= orbRatio;
-        if (first) {
-          console.log(name, x, y, z);
-          first = false;
-        }
       p.push();
       {
         p.scale(satScale);
         p.translate(x, y, z);
-        p.fill(255, 0, 0);
+        p.stroke(100);
+        p.strokeWeight(1);
+        p.fill(200);
         p.model(satelliteModel);
       }
       p.pop();
     }
+
+    switch(view){
+      case 0:
+        earthView();
+        break;
+      case 1:
+        spaceView();
+        break;
+      case 2:
+        satteliteView();
+        break;
+      default:
+        break;
+    }
+
+    let cameraLocation = projector.project(longitude,latitude,altitude);
+    let x = cameraLocation[0] * ratio;
+    let y = cameraLocation[1] * ratio;
+    let z = cameraLocation[2] * ratio;
+    cam.setPosition(x,y,z);
   };
 
   p.windowResized = () => {

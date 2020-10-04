@@ -31,7 +31,6 @@ class Manager {
       this.map.set(sat.name, sat);
     } catch (e) {
       sat = null;
-      console.log("bad");
     }
     if (sat !== null) {
       this.map.set(sat.name, sat);
@@ -58,7 +57,7 @@ class Manager {
     sat.latitude = info.lat;
     sat.longitude = info.lng;
     sat.velocity = info.velocity;
-    const xyz = projector.project(sat.latitude, sat.longitude, sat.height);
+    const xyz = projector.project(sat.latitude, sat.longitude, sat.height*1000);
     sat.x = xyz[0];
     sat.y = xyz[1];
     sat.z = xyz[2];
@@ -78,8 +77,7 @@ class Manager {
 
   getSat(tleStr, timestamp, groundLat, groundLng, groundHeight) {
     const info = getSatelliteInfo(tleStr, Date.now(), groundLat, groundLng, groundHeight);
-    const orbit = this.getOrbit(tleStr, Date.now(), info.height);
-    return new Sat(tleStr, info, orbit);
+    return new Sat(tleStr, info);
   }
 
   getAllVisible() {
