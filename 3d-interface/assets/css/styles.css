@@ -10,7 +10,9 @@ canvas {
   display: block;
 }
 #bar{
-  background: black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: rgb(67, 86, 107);
   width: 100%;
 }
 #renderer{
@@ -18,7 +20,13 @@ canvas {
   height: auto;
   margin: 0;
 }
-#nav-links-container{
+#logo{
+  zoom: 0.15;
+  -moz-transform: scale(0.15);
+  padding: 0;
+  margin: 0;
+}
+/* #nav-links-container{
   list-style: none;
   display: flex;
   flex-direction: row;
@@ -37,4 +45,9 @@ canvas {
   font-family: "Montserrat", sans-serif;
   width: auto;
   height: auto;
+} */
+
+.nav-item {
+  padding-right: 30px;
+  padding-left: 30px;
 }
